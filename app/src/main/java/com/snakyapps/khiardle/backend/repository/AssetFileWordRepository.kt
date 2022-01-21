@@ -4,8 +4,9 @@ import android.content.res.AssetManager
 import com.snakyapps.khiardle.backend.models.Word
 
 class AssetFileWordRepository(private val assetManager: AssetManager) : WordRepository {
-    private val allWords = assetManager.open("words.txt").toString().split("\n")
+    private val allWords =
+        assetManager.open("words.txt").readBytes().decodeToString().split("\r\n", "\n")
     override fun find(word: Word): Boolean {
-        return allWords.contains(word.word)
+        return allWords.contains(word.word.lowercase())
     }
 }

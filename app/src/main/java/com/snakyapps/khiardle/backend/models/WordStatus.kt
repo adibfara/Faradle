@@ -28,3 +28,4 @@ enum class EqualityStatus {
     Correct,
     Incorrect;
 }
+
