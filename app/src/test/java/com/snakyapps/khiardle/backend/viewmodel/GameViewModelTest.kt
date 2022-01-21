@@ -62,4 +62,13 @@ class GameViewModelTest {
 
         assertEquals(GameViewModel.State(testGame, "ABBYL"), viewModel.state().value)
     }
+
+    @Test
+    fun `word length is considered`() {
+        val testGame = testGame.copy(wordLength = 3)
+        val viewModel = createViewModel(testGame)
+        viewModel.appendTestWord("abcsdlkfj")
+
+        assertEquals(GameViewModel.State(testGame, "ABC"), viewModel.state().value)
+    }
 }
