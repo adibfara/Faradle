@@ -1,11 +1,16 @@
 package com.snakyapps.khiardle.backend.models
 
+enum class Language {
+    Farsi, English
+}
+
 data class KeyboardKeys(
-    val keys: List<Key>
+    val language: Language,
+    val keys: List<Key>,
 ) {
     data class Key(
         val button: Button,
-        val enabled: Boolean
+        val enabled: Boolean,
     ) {
         enum class Button {
             A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z;
@@ -16,7 +21,7 @@ data class KeyboardKeys(
         fun default(): KeyboardKeys {
             val allKeys = Key.Button.values()
 
-            return KeyboardKeys(allKeys.map {
+            return KeyboardKeys(Language.English, allKeys.map {
                 Key(it, true)
             }.toList())
         }
