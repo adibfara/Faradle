@@ -1,6 +1,8 @@
 package com.snakyapps.khiardle.backend.viewmodel
 
+import com.snakyapps.khiardle.backend.models.EqualityStatus
 import com.snakyapps.khiardle.backend.models.Game
+import com.snakyapps.khiardle.backend.models.Guess
 import com.snakyapps.khiardle.backend.models.Word
 import com.snakyapps.khiardle.backend.models.WordStatus
 import com.snakyapps.khiardle.backend.usecase.GetWordStatus
@@ -39,10 +41,12 @@ class GameViewModelTest {
         testGame: Game = this@GameViewModelTest.testGame,
     ) = GameViewModel(testGame, getWordStatus)
 
-    private fun Word.mockStatus(wordStatus: WordStatus) {
+    private fun Word.mockStatus(wordStatus: WordStatus): Word {
         coEvery {
             getWordStatus.execute(this@mockStatus, any())
         } returns wordStatus
+
+        return this
     }
 
     private fun GameViewModel.appendTestWord(word: String) {
@@ -78,5 +82,45 @@ class GameViewModelTest {
         viewModel.characterEntered('a')
         viewModel.submit()
         assertEquals(GameViewModel.State(testGame, "A"), viewModel.state().value)
+    }
+
+    @Test
+    fun `submit tests the word and adds it to game when it exists`() {
+        val viewModel = createViewModel()
+        val wordStatus1 = WordStatus.Incorrect(arrayOf(
+            EqualityStatus.Correct,
+            EqualityStatus.Correct,
+            EqualityStatus.Correct,
+            EqualityStatus.Correct,
+            EqualityStatus.Incorrect
+        ))
+        val wordStatus2 = WordStatus.Incorrect(arrayOf(
+            EqualityStatus.Correct,
+            EqualityStatus.WrongPosition,
+            EqualityStatus.WrongPosition,
+            EqualityStatus.Correct,
+            EqualityStatus.Incorrect
+        ))
+
+        viewModel.assertGuesses(
+            Word("testa").mockStatus(wordStatus1),
+            listOf(wordStatus1))
+        viewModel.assertGuesses(
+            Word("tsetx").mockStatus(wordStatus2),
+            listOf(wordStatus1, wordStatus2))
+    }
+
+    private fun GameViewModel.assertGuesses(
+        testWord: Word,
+        guessStatuses: List<WordStatus>,
+    ) {
+        val guesses = guessStatuses.map {
+            Guess(testWord, it)
+        }
+        appendTestWord(testWord.word)
+        submit()
+        assertEquals(GameViewModel.State(testGame.copy(
+            guesses = guesses
+        ), null), state().value)
     }
 }
