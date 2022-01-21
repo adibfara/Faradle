@@ -36,7 +36,7 @@ class GameViewModelTest {
     )
 
     private fun createViewModel(
-        game: Game = testGame,
+        testGame: Game = this@GameViewModelTest.testGame,
     ) = GameViewModel(testGame, getWordStatus)
 
     private fun Word.mockStatus(wordStatus: WordStatus) {

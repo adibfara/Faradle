@@ -27,7 +27,10 @@ class GameViewModel(
         stateFlow.value = newState(stateFlow.value)
     }
 
+    private fun currentState(): State = state().value
+
     fun characterEntered(character: Char) {
+        if (currentState().currentlyEnteringWord?.length == currentState().game.wordLength) return
         val character = character.uppercaseChar()
         updateState {
             copy(currentlyEnteringWord = (currentlyEnteringWord ?: "") + character)
