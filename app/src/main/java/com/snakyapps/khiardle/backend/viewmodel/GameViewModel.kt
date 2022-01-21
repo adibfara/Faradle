@@ -2,6 +2,7 @@ package com.snakyapps.khiardle.backend.viewmodel
 
 import com.snakyapps.khiardle.backend.models.Game
 import com.snakyapps.khiardle.backend.models.Guess
+import com.snakyapps.khiardle.backend.models.KeyboardKeys
 import com.snakyapps.khiardle.backend.models.Word
 import com.snakyapps.khiardle.backend.models.WordStatus
 import com.snakyapps.khiardle.backend.usecase.GetWordStatus
@@ -57,11 +58,13 @@ class GameViewModel(
         val word = Word(currentState().currentlyEnteringWord!!)
         val status = getWordStatus.execute(word,
             currentState().game.originalWord)
+
         updateState {
+            val newGuesses = if (status != WordStatus.NotExists) game.guesses + Guess(
+                word, status
+            ) else game.guesses
             copy(
-                game = game.copy(guesses = game.guesses + Guess(
-                    word, status
-                )),
+                game = game.copy(guesses = newGuesses),
                 currentlyEnteringWord = if (status != WordStatus.NotExists) null else currentlyEnteringWord,
                 doesNotExist = if (status == WordStatus.NotExists) true else doesNotExist)
         }

@@ -3,53 +3,47 @@ package com.snakyapps.khiardle
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.snakyapps.khiardle.backend.models.EqualityStatus
-import com.snakyapps.khiardle.backend.models.EqualityStatus.Correct
-import com.snakyapps.khiardle.backend.models.EqualityStatus.Incorrect
-import com.snakyapps.khiardle.backend.models.EqualityStatus.WrongPosition
 import com.snakyapps.khiardle.backend.models.Game
-import com.snakyapps.khiardle.backend.models.Guess
+import com.snakyapps.khiardle.backend.models.KeyboardKeys
 import com.snakyapps.khiardle.backend.models.Word
-import com.snakyapps.khiardle.backend.models.WordStatus
 import com.snakyapps.khiardle.backend.repository.AssetFileWordRepository
 import com.snakyapps.khiardle.backend.usecase.GetWordStatus
 import com.snakyapps.khiardle.backend.viewmodel.GameViewModel
+import com.snakyapps.khiardle.ui.GameGrid
 import com.snakyapps.khiardle.ui.theme.KhiardleTheme
-import com.snakyapps.khiardle.ui.theme.correctBackground
-import com.snakyapps.khiardle.ui.theme.enteringBackground
-import com.snakyapps.khiardle.ui.theme.incorrectBackground
-import com.snakyapps.khiardle.ui.theme.wrongPositionBackground
+import com.snakyapps.khiardle.ui.theme.keyboard
+import com.snakyapps.khiardle.ui.theme.keyboardDisabled
+import com.snakyapps.khiardle.ui.theme.onKeyboard
+import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,21 +63,7 @@ class MainActivity : ComponentActivity() {
                     }
                     val viewModel = remember {
                         val initialGame = Game(Word("TESTY"), listOf(
-                            Guess(
-                                Word("TSETX"),
-                                WordStatus.Incorrect(
-                                    arrayOf(
-                                        Correct,
-                                        WrongPosition,
-                                        WrongPosition,
-                                        Correct,
-                                        Incorrect,
-                                    )
-                                ),
-                            ),
-                            Guess(
-                                Word("TESTY"), WordStatus.Correct,
-                            )
+
                         ), 5)
                         GameViewModel(initialGame, getWordStatus)
                     }
@@ -97,6 +77,8 @@ class MainActivity : ComponentActivity() {
                         },
                         onSubmit = {
                             viewModel.submit()
+                        }, shownError = {
+                            viewModel.shownNotExists()
                         })
                 }
             }
@@ -110,129 +92,118 @@ class MainActivity : ComponentActivity() {
         onKey: (char: Char) -> Unit,
         onBackspace: () -> Unit,
         onSubmit: () -> Unit,
+        shownError: () -> Unit,
     ) {
+
         Box(Modifier
             .fillMaxSize()
-            .padding(64.dp)) {
+            .padding(32.dp)) {
 
             Column {
                 GameGrid(state)
+                Spacer(modifier = Modifier.size(16.dp))
+                GameKeyboard(
+                    state,
+                    onKey = onKey,
+                    onBackspace = onBackspace,
+                    onSubmit = onSubmit,
+                )
+            }
+            LaunchedEffect(key1 = state.doesNotExist, block = {
+                if (state.doesNotExist) {
+                    delay(2000)
+                    shownError()
+                }
+            })
+            AnimatedVisibility(state.doesNotExist, modifier = Modifier
+                .align(Alignment.BottomCenter)) {
+                Box(Modifier
+                    .align(Alignment.BottomCenter)
+                    .clip(RoundedCornerShape(5.dp))
+                    .background(MaterialTheme.colorScheme.error)
+                    .padding(16.dp)) {
+                    Text(text = "The word does not exist!",
+                        color = MaterialTheme.colorScheme.onError)
+                }
             }
         }
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
     @Composable
-    private fun GameGrid(
+    internal fun GameKeyboard(
         state: GameViewModel.State,
-        modifier: Modifier = Modifier,
+        onKey: (char: Char) -> Unit,
+        onBackspace: () -> Unit,
+        onSubmit: () -> Unit,
     ) {
-        LazyVerticalGrid(cells = GridCells.Fixed(state.game.wordLength),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            verticalArrangement = spacedBy(8.dp),
-            modifier = modifier
-        ) {
-            val guesses = state.game.guesses.size
-            items((state.game.wordLength * guesses)) {
-                println(it)
-                val guess = state.game.guesses[it / state.game.wordLength]
-                val position = it % state.game.wordLength
-                val character = guess.word.word[position]
-                val status = when (guess.wordStatus) {
-                    WordStatus.Correct -> Correct
-                    is WordStatus.Incorrect -> guess.wordStatus.equalityStatuses[position]
-                    WordStatus.NotExists -> TODO()
-                }
-                WordCharacterBox(character = character, status = status)
+        val modifier = remember {
+            Modifier.width(32.dp)
+        }
+        Column {
+            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
 
-            }
-            if (guesses < 6) {
-                items(state.game.wordLength) {
-                    val enteredCharacter = state.currentlyEnteringWord?.getOrNull(it)
-                    if (enteredCharacter != null) {
-                        WordCharacterBox(character = enteredCharacter, status = null)
-                    } else {
-                        EmptyCharacterBox()
-                    }
-                }
-
-                val emptyBoxes =
-                    (6 - guesses - 1).coerceAtLeast(
-                        0)
-                items(emptyBoxes * state.game.wordLength) {
-                    EmptyCharacterBox()
+                repeat(10) {
+                    val key = state.game.availableKeyboard.keys[it]
+                    KeyboardKey(key, onKey, modifier)
                 }
             }
+            Spacer(Modifier.size(4.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(4.dp),
+                modifier = Modifier.padding(start = 8.dp)) {
 
+                repeat(9) {
+                    val key = state.game.availableKeyboard.keys[10 + it]
+                    KeyboardKey(key, onKey, modifier)
+                }
+            }
+            Spacer(Modifier.size(4.dp))
+
+            Row(horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier) {
+
+                KeyboardKey(text = "ENTER", isEnabled = true, onClick = onSubmit)
+                repeat(7) {
+                    val key = state.game.availableKeyboard.keys[19 + it]
+                    KeyboardKey(key, onKey, modifier)
+                }
+
+                KeyboardKey(text = "⌫",
+                    isEnabled = true,
+                    onClick = onBackspace,
+                    modifier = Modifier.width(64.dp))
+            }
         }
     }
 
     @Composable
-    private fun WordCharacterBox(
-        character: Char,
-        status: EqualityStatus?,
+    private fun KeyboardKey(
+        key: KeyboardKeys.Key,
+        onKey: (char: Char) -> Unit,
         modifier: Modifier = Modifier,
     ) {
-        val color = when (status) {
-            WrongPosition -> MaterialTheme.colorScheme.wrongPositionBackground
-            Correct -> MaterialTheme.colorScheme.correctBackground
-            Incorrect -> MaterialTheme.colorScheme.incorrectBackground
-            null -> MaterialTheme.colorScheme.enteringBackground
+        KeyboardKey(key.button.toString().uppercase(), key.enabled, modifier = modifier) {
+            onKey(key.button)
         }
-
-        val textColor = when (status) {
-            null -> MaterialTheme.colorScheme.onBackground
-            else -> MaterialTheme.colorScheme.onPrimary
-        }
-        val borderModifier = if (status == null) Modifier.border(1.dp,
-            MaterialTheme.colorScheme.incorrectBackground) else Modifier
-        BasicCharacterBox(borderModifier, color, character, textColor, modifier)
     }
 
     @Composable
-    fun EmptyCharacterBox(
+    private fun KeyboardKey(
+        text: String,
+        isEnabled: Boolean,
         modifier: Modifier = Modifier,
+        onClick: () -> Unit,
     ) {
-        BasicCharacterBox(modifier = modifier, borderModifier = Modifier.border(1.dp,
-            MaterialTheme.colorScheme.incorrectBackground),
-            color = Color.Transparent,
-            character = null,
-            textColor = Color.Transparent)
-    }
-
-    @Composable
-    private fun BasicCharacterBox(
-        borderModifier: Modifier,
-        color: Color,
-        character: Char?,
-        textColor: Color,
-        modifier: Modifier = Modifier,
-    ) {
-        Box(
-            modifier
-                .aspectRatio(1f)
-                .clip(RoundedCornerShape(2.dp))
-                .then(borderModifier)
-                .background(animateColorAsState(targetValue = color).value),
-            contentAlignment = Alignment.Center) {
-            if (character != null)
-                Text(character.uppercase(),
-                    color = animateColorAsState(targetValue = textColor).value,
-                    style = TextStyle(
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Black
-                    ))
-        }
-    }
-
-    @Preview
-    @Composable
-    private fun CharacterBoxPreview() {
-        Row {
-            WordCharacterBox(character = 'A', status = null)
-            WordCharacterBox(character = 'D', status = Incorrect)
-            WordCharacterBox(character = 'I', status = WrongPosition)
-            WordCharacterBox(character = 'B', status = Correct)
+        val color by animateColorAsState(targetValue = if (isEnabled) MaterialTheme.colorScheme.keyboard else MaterialTheme.colorScheme.keyboardDisabled)
+        Box(modifier
+            .height(40.dp)
+            .clip(RoundedCornerShape(2.dp))
+            .background(color)
+            .clickable(onClick = onClick), Alignment.Center) {
+            Text(
+                modifier = Modifier,
+                text = text,
+                color = MaterialTheme.colorScheme.onKeyboard,
+                fontSize = 18.sp
+            )
         }
     }
 }

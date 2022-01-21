@@ -146,6 +146,7 @@ class GameViewModelTest {
         viewModel.shownNotExists()
         assertEquals(false, viewModel.state().value.doesNotExist)
         assertEquals("ABCSD", viewModel.state().value.currentlyEnteringWord)
+        assertEquals(0, viewModel.state().value.game.guesses.size)
     }
 
     @Test

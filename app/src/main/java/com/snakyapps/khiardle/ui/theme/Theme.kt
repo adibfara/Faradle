@@ -43,6 +43,9 @@ val ColorScheme.correctBackground @Composable get() = Color(0xFF4CAF50)
 val ColorScheme.wrongPositionBackground @Composable get() = Color(0xFFFFC107)
 val ColorScheme.incorrectBackground @Composable get() = Color(0xFF5B5B5B)
 val ColorScheme.enteringBackground @Composable get() = MaterialTheme.colorScheme.background
+val ColorScheme.keyboard @Composable get() = Color(0xFF393939)
+val ColorScheme.keyboardDisabled @Composable get() = Color(0xFF642424)
+val ColorScheme.onKeyboard @Composable get() = Color(0xFFE7E7E7)
 
 @Composable
 fun KhiardleTheme(

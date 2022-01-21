@@ -1,36 +1,62 @@
 package com.snakyapps.khiardle.backend.models
 
-enum class Language {
-    Farsi, English
+import androidx.annotation.Keep
+import com.snakyapps.khiardle.backend.models.KeyboardKeys.Key.Companion.englishKeys
+
+enum class Language(val keys: List<Char>) {
+    English(englishKeys)
 }
 
-data class KeyboardKeys(
+abstract class KeyboardKeys(
+    open val keys: List<Key>,
     val language: Language,
-    val keys: List<Key>,
 ) {
+
+    abstract fun withUpdatedButton(keys: List<Key>): KeyboardKeys
     data class Key(
-        val button: Button,
+        val button: Char,
         val enabled: Boolean,
     ) {
-        enum class Button {
-            A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z;
+
+        @Keep
+        companion object {
+            val englishKeys = listOf(
+                'Q',
+                'W',
+                'E',
+                'R',
+                'T',
+                'Y',
+                'U',
+                'I',
+                'O',
+                'P',
+                'A',
+                'S',
+                'D',
+                'F',
+                'G',
+                'H',
+                'J',
+                'K',
+                'L',
+                'Z',
+                'X',
+                'C',
+                'V',
+                'B',
+                'N',
+                'M')
         }
     }
 
-    companion object {
-        fun default(): KeyboardKeys {
-            val allKeys = Key.Button.values()
-
-            return KeyboardKeys(Language.English, allKeys.map {
-                Key(it, true)
-            }.toList())
-        }
-
-        fun KeyboardKeys.copy(button: Key.Button, isEnabled: Boolean): KeyboardKeys {
-            val newKeys = keys.map {
-                if (it.button == button) it.copy(enabled = isEnabled) else it
-            }
-            return copy(keys = newKeys)
+    data class English(
+        override val keys: List<Key> = englishKeys.map {
+            Key(it, true)
+        }.toList(),
+    ) : KeyboardKeys(keys, Language.English) {
+        override fun withUpdatedButton(keys: List<Key>): KeyboardKeys {
+            return copy(keys = keys)
         }
     }
 }
