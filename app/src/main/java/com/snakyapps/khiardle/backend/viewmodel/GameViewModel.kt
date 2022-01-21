@@ -22,7 +22,16 @@ class GameViewModel(
     ))
 
     fun state(): StateFlow<State> = stateFlow
+
+    private fun updateState(newState: State.() -> State) {
+        stateFlow.value = newState(stateFlow.value)
+    }
+
     fun characterEntered(character: Char) {
+        val character = character.uppercaseChar()
+        updateState {
+            copy(currentlyEnteringWord = (currentlyEnteringWord ?: "") + character)
+        }
     }
 
     fun backspacePressed() {
