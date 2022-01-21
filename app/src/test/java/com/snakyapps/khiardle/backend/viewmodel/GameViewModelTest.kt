@@ -71,4 +71,12 @@ class GameViewModelTest {
 
         assertEquals(GameViewModel.State(testGame, "ABC"), viewModel.state().value)
     }
+
+    @Test
+    fun `submit does not work until word is entered completely`() {
+        val viewModel = createViewModel()
+        viewModel.characterEntered('a')
+        viewModel.submit()
+        assertEquals(GameViewModel.State(testGame, "A"), viewModel.state().value)
+    }
 }
