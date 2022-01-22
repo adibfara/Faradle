@@ -25,9 +25,16 @@ private fun KeyboardKeys.updateWithGuesses(guesses: List<Guess>): KeyboardKeys {
 
     val keys = keys.map {
 
+        val states = allWords[it.button.uppercaseChar()]
         val isIncorrect =
-            allWords[it.button.uppercaseChar()]?.all { it.second == EqualityStatus.Incorrect }
-        it.copy(enabled = isIncorrect != true)
+            states?.all { it.second == EqualityStatus.Incorrect }
+        val equalityStatus = when {
+            states?.any { it.second == EqualityStatus.Correct } == true -> EqualityStatus.Correct
+            states?.any { it.second == EqualityStatus.WrongPosition } == true -> EqualityStatus.WrongPosition
+            states?.all { it.second == EqualityStatus.Incorrect } == true -> EqualityStatus.Incorrect
+            else -> null
+        }
+        it.copy(equalityStatus = equalityStatus)
     }
 
     return withUpdatedButton(keys)

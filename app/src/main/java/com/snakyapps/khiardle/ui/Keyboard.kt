@@ -5,9 +5,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -17,17 +19,19 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.snakyapps.khiardle.backend.models.EqualityStatus
 import com.snakyapps.khiardle.backend.models.KeyboardKeys
 import com.snakyapps.khiardle.backend.viewmodel.GameViewModel
+import com.snakyapps.khiardle.ui.theme.correctBackground
 import com.snakyapps.khiardle.ui.theme.keyboard
 import com.snakyapps.khiardle.ui.theme.keyboardDisabled
 import com.snakyapps.khiardle.ui.theme.onKeyboard
+import com.snakyapps.khiardle.ui.theme.wrongPositionBackground
 
 @Composable
 internal fun GameKeyboard(
@@ -36,40 +40,39 @@ internal fun GameKeyboard(
     onBackspace: () -> Unit,
     onSubmit: () -> Unit,
 ) {
-    val modifier = remember {
-        Modifier.width(32.dp)
-    }
-    Column {
-        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+    BoxWithConstraints() {
+        Column {
+            Row(horizontalArrangement = Arrangement.spacedBy(4.dp),
+                modifier = Modifier.fillMaxWidth()) {
 
-            repeat(10) {
-                val key = state.game.availableKeyboard.keys[it]
-                KeyboardKey(key, onKey, modifier)
+                repeat(10) {
+                    val key = state.game.availableKeyboard.keys[it]
+                    KeyboardKey(key, onKey, Modifier.weight(1f))
+                }
             }
-        }
-        Spacer(Modifier.size(4.dp))
-        Row(horizontalArrangement = Arrangement.spacedBy(4.dp),
+            Spacer(Modifier.size(4.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(4.dp),
             modifier = Modifier.padding(start = 8.dp)) {
 
             repeat(9) {
                 val key = state.game.availableKeyboard.keys[10 + it]
-                KeyboardKey(key, onKey, modifier)
+                KeyboardKey(key, onKey, Modifier.weight(1f))
             }
         }
         Spacer(Modifier.size(4.dp))
 
         Row(horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier) {
 
-            KeyboardKey(text = "ENTER", isEnabled = true, onClick = onSubmit)
+            KeyboardKey(text = " ENTER ", onClick = onSubmit)
             repeat(7) {
                 val key = state.game.availableKeyboard.keys[19 + it]
-                KeyboardKey(key, onKey, modifier)
+                KeyboardKey(key, onKey, Modifier.weight(1f))
             }
 
             KeyboardKey(text = "⌫",
-                isEnabled = true,
-                onClick = onBackspace,
-                modifier = Modifier.width(64.dp))
+                modifier = Modifier.width(64.dp),
+                onClick = onBackspace)
+        }
         }
     }
 }
@@ -80,7 +83,7 @@ private fun KeyboardKey(
     onKey: (char: Char) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    KeyboardKey(key.button.toString().uppercase(), key.enabled, modifier = modifier) {
+    KeyboardKey(key.button.toString().uppercase(), modifier = modifier, key.equalityStatus) {
         onKey(key.button)
     }
 }
@@ -88,11 +91,19 @@ private fun KeyboardKey(
 @Composable
 private fun KeyboardKey(
     text: String,
-    isEnabled: Boolean,
     modifier: Modifier = Modifier,
+    status: EqualityStatus? = null,
     onClick: () -> Unit,
 ) {
-    val color by animateColorAsState(targetValue = if (isEnabled) MaterialTheme.colorScheme.keyboard else MaterialTheme.colorScheme.keyboardDisabled)
+    val color by animateColorAsState(targetValue = when (status) {
+        EqualityStatus.Incorrect -> MaterialTheme.colorScheme.keyboardDisabled
+        else -> MaterialTheme.colorScheme.keyboard
+    })
+    val testColor by animateColorAsState(targetValue = when (status) {
+        EqualityStatus.WrongPosition -> MaterialTheme.colorScheme.wrongPositionBackground
+        EqualityStatus.Correct -> MaterialTheme.colorScheme.correctBackground
+        EqualityStatus.Incorrect, null -> MaterialTheme.colorScheme.onKeyboard
+    })
     Box(modifier
         .height(40.dp)
         .clip(RoundedCornerShape(2.dp))
@@ -101,7 +112,7 @@ private fun KeyboardKey(
         Text(
             modifier = Modifier,
             text = text,
-            color = MaterialTheme.colorScheme.onKeyboard,
+            color = testColor,
             fontSize = 18.sp
         )
     }

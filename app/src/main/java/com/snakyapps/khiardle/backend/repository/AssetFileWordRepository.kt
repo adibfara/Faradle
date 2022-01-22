@@ -7,7 +7,9 @@ import java.util.stream.Collectors.toSet
 class AssetFileWordRepository(assetManager: AssetManager) : WordRepository {
     private val allWords =
         assetManager.open("words.txt").readBytes().decodeToString().split("\r\n", "\n")
-            .filter { it.length == 5 }.map { it.uppercase() }.toSet()
+            .filter { it.length == 5 }.map { it.uppercase() }.toSet().also {
+                it.forEach { println(it) }
+            }
 
     override fun find(word: Word): Boolean {
         return allWords.contains(word.word.uppercase())

@@ -15,8 +15,9 @@ abstract class KeyboardKeys(
     abstract fun withUpdatedButton(keys: List<Key>): KeyboardKeys
     data class Key(
         val button: Char,
-        val enabled: Boolean,
+        val equalityStatus: EqualityStatus?,
     ) {
+        val enabled = equalityStatus != EqualityStatus.Incorrect
 
         @Keep
         companion object {
@@ -52,7 +53,7 @@ abstract class KeyboardKeys(
 
     data class English(
         override val keys: List<Key> = englishKeys.map {
-            Key(it, true)
+            Key(it, null)
         }.toList(),
     ) : KeyboardKeys(keys, Language.English) {
         override fun withUpdatedButton(keys: List<Key>): KeyboardKeys {

@@ -17,13 +17,13 @@ class GameKtTest {
 
         companion object {
             val allKeys = listOf(
-                Key('A', true),
-                Key('B', true),
-                Key('C', true),
-                Key('D', true),
-                Key('E', true),
-                Key('F', true),
-                Key('G', true),
+                Key('A', null),
+                Key('B', null),
+                Key('C', null),
+                Key('D', null),
+                Key('E', null),
+                Key('F', null),
+                Key('G', null),
             )
 
             fun default(): TestKeyboard {
@@ -86,13 +86,13 @@ class GameKtTest {
             ),
         ))
         assertEquals(listOf(
-            KeyboardKeys.Key('A', true),
-            KeyboardKeys.Key('B', true),
-            KeyboardKeys.Key('C', false),
-            KeyboardKeys.Key('D', false),
-            KeyboardKeys.Key('E', false),
-            KeyboardKeys.Key('F', true),
-            KeyboardKeys.Key('G', true),
+            KeyboardKeys.Key('A', EqualityStatus.Correct),
+            KeyboardKeys.Key('B', EqualityStatus.Correct),
+            KeyboardKeys.Key('C', EqualityStatus.Incorrect),
+            KeyboardKeys.Key('D', EqualityStatus.Incorrect),
+            KeyboardKeys.Key('E', EqualityStatus.Incorrect),
+            KeyboardKeys.Key('F', EqualityStatus.WrongPosition),
+            KeyboardKeys.Key('G', null),
         ), game2.availableKeyboard.keys)
     }
 }

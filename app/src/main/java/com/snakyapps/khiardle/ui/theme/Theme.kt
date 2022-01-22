@@ -18,15 +18,19 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.ViewCompat
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    primary = Color(0xFFCCC2DC),
+    secondary = Color(0xFFD1D1D1),
+    tertiary = Color(0xFFD1D1D1),
+    onBackground = Color(0xFFD1D1D1),
+    onPrimary = Color(0xFF2A2A2A),
 )
 
 private val LightColorScheme = lightColorScheme(
     primary = Color(0xFFCCC2DC),
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+    secondary = Color(0xFFD1D1D1),
+    tertiary = Pink40,
+    onBackground = Color(0xFFD1D1D1),
+    onPrimary = Color(0xFFD1D1D1),
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -40,7 +44,7 @@ private val LightColorScheme = lightColorScheme(
 )
 
 val ColorScheme.correctBackground @Composable get() = Color(0xFF4CAF50)
-val ColorScheme.wrongPositionBackground @Composable get() = Color(0xFFFFC107)
+val ColorScheme.wrongPositionBackground @Composable get() = Color(0xFFFFA000)
 val ColorScheme.incorrectBackground @Composable get() = Color(0xFF5B5B5B)
 val ColorScheme.enteringBackground @Composable get() = MaterialTheme.colorScheme.background
 val ColorScheme.keyboard @Composable get() = Color(0xFF393939)
@@ -49,16 +53,13 @@ val ColorScheme.onKeyboard @Composable get() = Color(0xFFE7E7E7)
 
 @Composable
 fun KhiardleTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: Boolean = true,//isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit,
 ) {
     val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
+
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
