@@ -7,6 +7,7 @@ data class Game(
     private val keyboardKeys: KeyboardKeys = KeyboardKeys.English(),
 ) {
     val availableKeyboard: KeyboardKeys = keyboardKeys.updateWithGuesses(guesses)
+    val isWon = guesses.any { it.wordStatus == WordStatus.Correct }
 }
 
 private fun KeyboardKeys.updateWithGuesses(guesses: List<Guess>): KeyboardKeys {

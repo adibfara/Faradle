@@ -4,5 +4,6 @@ import com.snakyapps.khiardle.backend.models.Word
 
 interface WordRepository {
     fun find(word: Word): Boolean
+    fun random(): Word
 }
 

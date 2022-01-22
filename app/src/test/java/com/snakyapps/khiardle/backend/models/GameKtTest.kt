@@ -45,10 +45,17 @@ class GameKtTest {
     )
 
     @Test
-    fun `when character is disabled, it is not enabled in the keyboard`() {
-        val keyboard = TestKeyboard.default()
+    fun `when game is won it is included in the state`() {
         val game = testGame
-        // assertEquals(allKeys, game.availableKeyboard.keys)
+        assertEquals(false, game.isWon)
+        val wonGame = testGame.copy(guesses = listOf(Guess(Word("TESTY"), WordStatus.Correct)))
+        assertEquals(true, wonGame.isWon)
+    }
+
+    @Test
+    fun `when character is disabled, it is not enabled in the keyboard`() {
+        val game = testGame
+        assertEquals(allKeys, game.availableKeyboard.keys)
 
         val game2 = testGame.copy(guesses = listOf(
             Guess(

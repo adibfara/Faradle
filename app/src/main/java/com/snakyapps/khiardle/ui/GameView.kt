@@ -1,5 +1,6 @@
 package com.snakyapps.khiardle.ui
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -37,6 +38,7 @@ internal fun GameGrid(
     state: GameViewModel.State,
     modifier: Modifier = Modifier,
 ) {
+
     LazyVerticalGrid(cells = GridCells.Fixed(state.game.wordLength),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalArrangement = Arrangement.Absolute.spacedBy(8.dp),
@@ -125,13 +127,14 @@ internal fun BasicCharacterBox(
             .then(borderModifier)
             .background(animateColorAsState(targetValue = color).value),
         contentAlignment = Alignment.Center) {
-        if (character != null)
-            Text(character.uppercase(),
+        AnimatedVisibility(character != null) {
+            Text(character?.uppercase() ?: "",
                 color = animateColorAsState(targetValue = textColor).value,
                 style = TextStyle(
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Black
                 ))
+        }
     }
 }
 

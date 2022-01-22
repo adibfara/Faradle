@@ -9,6 +9,10 @@ class TestWordRepository : WordRepository {
         return words.contains(word)
     }
 
+    override fun random(): Word {
+        return Word("TESTY")
+    }
+
     fun addWord(word: Word) = words.add(word)
 }
 
@@ -17,4 +21,7 @@ class AllExistRepository : WordRepository {
         return true
     }
 
+    override fun random(): Word {
+        return Word("TESTY")
+    }
 }
