@@ -35,7 +35,7 @@ internal fun ColumnScope.GameHeader(level: Level) {
         .clickable {
 
             context.startActivity(Intent(Intent.ACTION_VIEW).apply {
-                data = Uri.parse("http://www.github.com/adibfara/khiardle/")
+                data = Uri.parse("http://www.github.com/adibfara/Faradle/")
             })
         }
         .align(Alignment.CenterHorizontally)) {
@@ -47,7 +47,7 @@ internal fun ColumnScope.GameHeader(level: Level) {
             fontFamily = FontFamily.Serif,
             modifier = Modifier.align(
                 Alignment.CenterHorizontally))
-        Text(text = "github.com/adibfara/khiardle",
+        Text(text = "github.com/adibfara/faradle",
             style = MaterialTheme.typography.bodySmall,
             fontSize = 10.sp,
             modifier = Modifier.align(
