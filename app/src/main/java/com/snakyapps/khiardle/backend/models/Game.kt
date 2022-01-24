@@ -8,6 +8,7 @@ data class Game(
 ) {
     val availableKeyboard: KeyboardKeys = keyboardKeys.updateWithGuesses(guesses)
     val isWon = guesses.any { it.wordStatus == WordStatus.Correct }
+    val isOver = guesses.size == 6 && !isWon
 }
 
 private fun KeyboardKeys.updateWithGuesses(guesses: List<Guess>): KeyboardKeys {

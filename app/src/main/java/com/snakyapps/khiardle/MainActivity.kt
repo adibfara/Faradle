@@ -1,42 +1,22 @@
 package com.snakyapps.khiardle
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.unit.dp
-import com.snakyapps.khiardle.backend.models.Game
-import com.snakyapps.khiardle.backend.models.Word
 import com.snakyapps.khiardle.backend.repository.AssetFileWordRepository
+import com.snakyapps.khiardle.backend.repository.LocalStorageLevelRepository
+import com.snakyapps.khiardle.backend.usecase.GetNextLevel
 import com.snakyapps.khiardle.backend.usecase.GetWordStatus
-import com.snakyapps.khiardle.backend.viewmodel.GameViewModel
-import com.snakyapps.khiardle.ui.GameGrid
-import com.snakyapps.khiardle.ui.GameKeyboard
+import com.snakyapps.khiardle.backend.viewmodel.LevelsViewModel
 import com.snakyapps.khiardle.ui.WordScreen
 import com.snakyapps.khiardle.ui.theme.KhiardleTheme
-import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,18 +28,35 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    // simple dependency injection
                     val assetWordRepository = remember {
                         AssetFileWordRepository(assets)
                     }
                     val getWordStatus = remember {
                         GetWordStatus(assetWordRepository)
                     }
-                    var word by remember {
-                        mutableStateOf(assetWordRepository.random())
+
+                    val sharedPreferences: SharedPreferences = remember {
+                        getSharedPreferences("default", MODE_PRIVATE)
                     }
-                    WordScreen(word, getWordStatus) {
-                        word = assetWordRepository.random()
+                    val levelRepository = remember {
+                        LocalStorageLevelRepository(sharedPreferences)
                     }
+
+                    val getNextLevel = remember {
+                        GetNextLevel(assetWordRepository, levelRepository)
+                    }
+                    val levelViewModel = remember {
+                        LevelsViewModel(levelRepository, getNextLevel)
+                    }
+
+                    val level = levelViewModel.state().collectAsState().value.currentLevel
+                    if (level != null) {
+                        WordScreen(level, getWordStatus) {
+                            levelViewModel.levelPassed()
+                        }
+                    }
+
                 }
             }
         }

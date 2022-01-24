@@ -2,7 +2,6 @@ package com.snakyapps.khiardle.backend.viewmodel
 
 import com.snakyapps.khiardle.backend.models.Game
 import com.snakyapps.khiardle.backend.models.Guess
-import com.snakyapps.khiardle.backend.models.KeyboardKeys
 import com.snakyapps.khiardle.backend.models.Word
 import com.snakyapps.khiardle.backend.models.WordStatus
 import com.snakyapps.khiardle.backend.usecase.GetWordStatus
@@ -12,24 +11,12 @@ import kotlinx.coroutines.flow.StateFlow
 class GameViewModel(
     private val initialGame: Game,
     private val getWordStatus: GetWordStatus,
-) {
+) : BaseViewModel<GameViewModel.State>(State(initialGame)) {
     data class State(
         val game: Game,
         val currentlyEnteringWord: String? = null,
         val doesNotExist: Boolean = false,
     )
-
-    private val stateFlow = MutableStateFlow<State>(State(
-        initialGame,
-    ))
-
-    fun state(): StateFlow<State> = stateFlow
-
-    private fun updateState(newState: State.() -> State) {
-        stateFlow.value = newState(stateFlow.value)
-    }
-
-    private fun currentState(): State = state().value
 
     fun characterEntered(character: Char) {
         if (wordIsEnteredCompletely()) return
@@ -72,5 +59,13 @@ class GameViewModel(
 
     fun shownNotExists() {
         updateState { copy(doesNotExist = false) }
+    }
+
+    fun shownLost() {
+        updateState {
+            copy(game = game.copy(guesses = listOf()),
+                currentlyEnteringWord = null,
+                doesNotExist = false)
+        }
     }
 }

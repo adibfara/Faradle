@@ -2,7 +2,6 @@ package com.snakyapps.khiardle.backend.repository
 
 import android.content.res.AssetManager
 import com.snakyapps.khiardle.backend.models.Word
-import java.util.stream.Collectors.toSet
 
 class AssetFileWordRepository(assetManager: AssetManager) : WordRepository {
     private val allWords =
@@ -11,11 +10,21 @@ class AssetFileWordRepository(assetManager: AssetManager) : WordRepository {
                 it.forEach { println(it) }
             }
 
+    private val choosingWords =
+        assetManager.open("top.txt").readBytes().decodeToString().split("\r\n", "\n")
+            .filter { it.length == 5 }.map { it.uppercase() }.toList().also {
+                it.forEach { println(it) }
+            }
+
     override fun find(word: Word): Boolean {
-        return allWords.contains(word.word.uppercase())
+        return choosingWords.contains(word.word.uppercase())
     }
 
     override fun random(): Word {
         return Word(allWords.random())
+    }
+
+    override fun getWordForLevel(currentLevelNumber: Long): Word {
+        return Word(choosingWords[currentLevelNumber.toInt() - 1])
     }
 }

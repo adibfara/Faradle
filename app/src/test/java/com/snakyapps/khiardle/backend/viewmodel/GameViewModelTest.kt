@@ -163,4 +163,17 @@ class GameViewModelTest {
         viewModel.backspacePressed()
         assertEquals("BB", viewModel.state().value.currentlyEnteringWord)
     }
+
+    @Test
+    fun `shown lost works correctly`() {
+        val viewModel = createViewModel()
+        assertEquals(GameViewModel.State(testGame, null), viewModel.state().value)
+        viewModel.appendTestWord("TITLE")
+        viewModel.submit()
+        assert(viewModel.currentState().game.guesses.isNotEmpty())
+        assertEquals(false, viewModel.currentState().game.isOver)
+        viewModel.shownLost()
+        assert(viewModel.currentState().game.guesses.isEmpty())
+        assert(viewModel.currentState().currentlyEnteringWord.isNullOrBlank())
+    }
 }
