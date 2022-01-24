@@ -19,10 +19,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.snakyapps.khiardle.R
 import com.snakyapps.khiardle.backend.models.Level
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -39,7 +41,7 @@ internal fun ColumnScope.GameHeader(level: Level) {
         .align(Alignment.CenterHorizontally)) {
 
         var revealing by remember(level) { mutableStateOf(false) }
-        Text(text = "Khiardle",
+        Text(text = stringResource(id = R.string.app_name),
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Black,
             fontFamily = FontFamily.Serif,
