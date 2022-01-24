@@ -1,6 +1,7 @@
 package com.snakyapps.khiardle.ui
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -18,6 +19,8 @@ import com.snakyapps.khiardle.backend.viewmodel.GameViewModel
 import kotlinx.coroutines.delay
 
 @Composable
+@OptIn(ExperimentalAnimationApi::class)
+
 internal fun BoxScope.ErrorScreen(
     state: GameViewModel.State,
     shownError: () -> Unit,

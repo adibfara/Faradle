@@ -159,6 +159,7 @@ fun EmptyCharacterBox(
 }
 
 @Composable
+@OptIn(ExperimentalAnimationApi::class)
 internal fun BasicCharacterBox(
     borderModifier: Modifier,
     color: Color,

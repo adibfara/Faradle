@@ -1,6 +1,7 @@
 package com.snakyapps.khiardle.ui
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -16,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.snakyapps.khiardle.backend.viewmodel.GameViewModel
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 internal fun BoxScope.WonScreen(
     state: GameViewModel.State,
