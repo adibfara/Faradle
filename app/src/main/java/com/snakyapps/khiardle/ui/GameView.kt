@@ -82,48 +82,6 @@ internal fun GameGrid(
     }
 }
 
-/*
-    LazyVerticalGrid(cells = GridCells.Fixed(state.game.wordLength),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalArrangement = Arrangement.Absolute.spacedBy(8.dp),
-        modifier = modifier
-    ) {
-        val guesses = state.game.guesses.size
-        items((state.game.wordLength * guesses)) {
-            println(it)
-            val guess = state.game.guesses[it / state.game.wordLength]
-            val position = it % state.game.wordLength
-            val character = guess.word.word[position]
-            val status = when (guess.wordStatus) {
-                WordStatus.Correct -> EqualityStatus.Correct
-                is WordStatus.Incorrect -> guess.wordStatus.equalityStatuses[position]
-                WordStatus.NotExists -> EqualityStatus.Incorrect
-            }
-            WordCharacterBox(character = character, status = status)
-
-        }
-        if (guesses < 6) {
-            items(state.game.wordLength) {
-                val enteredCharacter = state.currentlyEnteringWord?.getOrNull(it)
-                if (enteredCharacter != null) {
-                    WordCharacterBox(character = enteredCharacter, status = null)
-                } else {
-                    EmptyCharacterBox()
-                }
-            }
-
-            val emptyBoxes =
-                (6 - guesses - 1).coerceAtLeast(
-                    0)
-            items(emptyBoxes * state.game.wordLength) {
-                EmptyCharacterBox()
-            }
-        }
-
-    }
-
-}
-*/
 @Composable
 internal fun WordCharacterBox(
     character: Char?,

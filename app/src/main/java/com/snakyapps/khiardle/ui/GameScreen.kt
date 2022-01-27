@@ -66,14 +66,14 @@ fun GameScreen(
 
     Box(Modifier
         .fillMaxSize()
-        .padding(horizontal = 32.dp, vertical = 16.dp)) {
+        .padding(horizontal = 8.dp, vertical = 16.dp)) {
 
-        Column(Modifier.padding(bottom = 16.dp)) {
+        Column(Modifier.padding(bottom = 8.dp)) {
             GameHeader(level)
 
             GameGrid(state,
                 modifier = Modifier
-                    .padding(top = 16.dp)
+                    .padding(top = 8.dp)
                     .weight(1f)
                     .fillMaxWidth(0.6f)
                     .align(CenterHorizontally))

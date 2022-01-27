@@ -61,7 +61,7 @@ internal fun ColumnScope.GameHeader(level: Level) {
         ) {
             Text(
                 text = "Level ${level.number}",
-                style = MaterialTheme.typography.headlineMedium,
+                style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Black,
                 fontFamily = FontFamily.Serif,
             )

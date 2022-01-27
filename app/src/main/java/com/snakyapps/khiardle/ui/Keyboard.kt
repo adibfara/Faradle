@@ -1,5 +1,7 @@
 package com.snakyapps.khiardle.ui
 
+import android.content.Context
+import android.os.Vibrator
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -123,18 +126,27 @@ private fun KeyboardKey(
         EqualityStatus.Correct -> MaterialTheme.colorScheme.correctBackground
         EqualityStatus.Incorrect, null -> MaterialTheme.colorScheme.onKeyboard
     })
+    val context = LocalContext.current
     Box(modifier
         .height(40.dp)
         .clip(RoundedCornerShape(2.dp))
         .background(color)
-        .clickable(onClick = onClick), Alignment.Center) {
+        .clickable(onClick = {
+            context.vibrate()
+            onClick()
+        }), Alignment.Center) {
         Text(
             modifier = Modifier,
             text = text,
             color = testColor,
-            fontSize = 18.sp
+            fontSize = 24.sp
         )
     }
+}
+
+private fun Context.vibrate() {
+    val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+    vibrator.vibrate(10)
 }
 
 @Composable
