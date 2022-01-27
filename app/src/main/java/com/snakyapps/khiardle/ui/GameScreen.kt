@@ -68,14 +68,14 @@ fun GameScreen(
         .fillMaxSize()
         .padding(horizontal = 32.dp, vertical = 16.dp)) {
 
-        Column {
+        Column(Modifier.padding(bottom = 16.dp)) {
             GameHeader(level)
 
             GameGrid(state,
                 modifier = Modifier
-                    .padding(top = 32.dp)
+                    .padding(top = 16.dp)
                     .weight(1f)
-                    .fillMaxWidth(0.7f)
+                    .fillMaxWidth(0.6f)
                     .align(CenterHorizontally))
             Spacer(modifier = Modifier.size(16.dp))
             GameKeyboard(

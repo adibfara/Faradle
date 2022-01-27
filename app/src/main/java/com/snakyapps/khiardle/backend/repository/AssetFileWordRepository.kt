@@ -6,12 +6,12 @@ import com.snakyapps.khiardle.backend.models.Word
 class AssetFileWordRepository(assetManager: AssetManager) : WordRepository {
     private val allWords =
         assetManager.open("words.txt").readBytes().decodeToString().split("\r\n", "\n")
-            .filter { it.length == 5 }.map { it.uppercase() }.toSet()
+            .filter { it.length == 5 }.map { it.uppercase().trim() }.toSet()
     private val choosingWords =
         assetManager.open("top.txt").readBytes().decodeToString().split("\r\n", "\n")
             .filter { it.length == 5 }.map { it.uppercase() }.toList()
     override fun find(word: Word): Boolean {
-        return choosingWords.contains(word.word.uppercase())
+        return allWords.contains(word.word.uppercase().trim())
     }
 
     override fun random(): Word {
