@@ -50,6 +50,7 @@ val ColorScheme.enteringBackground @Composable get() = MaterialTheme.colorScheme
 val ColorScheme.keyboard @Composable get() = Color(0xFF393939)
 val ColorScheme.keyboardDisabled @Composable get() = Color(0xFF642424)
 val ColorScheme.onKeyboard @Composable get() = Color(0xFFE7E7E7)
+val ColorScheme.onSubmit @Composable get() = Color(0xFFF7F7F7)
 
 @Composable
 fun KhiardleTheme(
