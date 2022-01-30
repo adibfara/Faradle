@@ -2,7 +2,6 @@ package com.snakyapps.khiardle.backend.repository
 
 import android.content.SharedPreferences
 import com.snakyapps.khiardle.backend.models.Level
-import java.lang.Long.max
 
 class LocalStorageLevelRepository(
     private val sharedPreferences: SharedPreferences,
@@ -12,7 +11,7 @@ class LocalStorageLevelRepository(
             return sharedPreferences.getLong("LastLevel", 1)
         }
         set(value) {
-            sharedPreferences.edit().putLong("LastLevel", value).commit()
+            sharedPreferences.edit().putLong("LastLevel", value).apply()
         }
 
     override fun getCurrentLevelNumber(): Long {
@@ -20,7 +19,7 @@ class LocalStorageLevelRepository(
     }
 
     override fun levelPassed(level: Level) {
-        val settingLevel = max(level.number + 1, lastLevel)
+        val settingLevel = kotlin.math.max(level.number + 1, lastLevel)
         lastLevel = settingLevel
     }
 }
