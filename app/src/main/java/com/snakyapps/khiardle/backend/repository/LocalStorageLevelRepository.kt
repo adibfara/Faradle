@@ -2,7 +2,7 @@ package com.snakyapps.khiardle.backend.repository
 
 import android.content.SharedPreferences
 import com.snakyapps.khiardle.backend.models.Level
-import java.lang.Long.max
+import kotlin.math.max
 
 class LocalStorageLevelRepository(
     private val sharedPreferences: SharedPreferences,
