@@ -13,7 +13,7 @@ APK [here](https://github.com/adibfara/Faradle/raw/main/app/release/faradle.apk)
 ---
 Updated the dataset of all words.
 
-Also, we now have a last level!
+Also, we now have fancier won, lost and last level screens!
 
 
 1.1
