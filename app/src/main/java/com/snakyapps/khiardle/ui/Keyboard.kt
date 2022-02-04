@@ -33,11 +33,7 @@ import androidx.compose.ui.unit.sp
 import com.snakyapps.khiardle.backend.models.EqualityStatus
 import com.snakyapps.khiardle.backend.models.KeyboardKeys
 import com.snakyapps.khiardle.backend.viewmodel.GameViewModel
-import com.snakyapps.khiardle.ui.theme.correctBackground
-import com.snakyapps.khiardle.ui.theme.keyboard
-import com.snakyapps.khiardle.ui.theme.keyboardDisabled
-import com.snakyapps.khiardle.ui.theme.onKeyboard
-import com.snakyapps.khiardle.ui.theme.wrongPositionBackground
+import com.snakyapps.khiardle.ui.theme.*
 
 @Composable
 internal fun GameKeyboard(
@@ -85,11 +81,12 @@ internal fun GameKeyboard(
                 .height(40.dp)
                 .clip(RoundedCornerShape(2.dp))
                 .background(MaterialTheme.colorScheme.primary)
+                .padding(4.dp)
                 .clickable(onClick = onSubmit), Alignment.Center) {
                 Text(text = "CHECK",
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Black,
-
+                    color = MaterialTheme.colorScheme.onSubmit,
                     modifier = Modifier
                         .padding(horizontal = 4.dp)
                         .clip(RoundedCornerShape(4.dp)))
