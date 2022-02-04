@@ -2,7 +2,7 @@
 
 The famous Wordle game created with Jetpack Compose!
 
-[Download v1.2](https://github.com/adibfara/Faradle/raw/main/app/release/faradle.apk)
+[Download Faradle_v1.2.apk](https://github.com/adibfara/Faradle/raw/main/app/release/faradle.apk)
 
 The logic is fully unit-tested. Please don't forget to report any bugs.
 
