@@ -9,6 +9,13 @@ APK [here](https://github.com/adibfara/Faradle/raw/main/app/release/faradle.apk)
 
 # Version
 
+1.2
+---
+Updated the dataset of all words.
+
+Also, we now have a last level!
+
+
 1.1
 ---
 Updated keyboard layout Complete vocabulary
