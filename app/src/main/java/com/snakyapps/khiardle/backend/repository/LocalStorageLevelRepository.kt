@@ -23,4 +23,8 @@ class LocalStorageLevelRepository(
         val settingLevel = max(level.number + 1, lastLevel)
         lastLevel = settingLevel
     }
+
+    override fun reset() {
+        lastLevel = 1
+    }
 }

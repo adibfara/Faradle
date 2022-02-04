@@ -19,6 +19,9 @@ class TestWordRepository : WordRepository {
     override fun getWordForLevel(currentLevelNumber: Long): Word {
         return words[currentLevelNumber.toInt() - 1]
     }
+
+    override val lastLevel: Long
+        get() = 2
 }
 
 class AllExistRepository : WordRepository {
@@ -33,6 +36,9 @@ class AllExistRepository : WordRepository {
     override fun getWordForLevel(currentLevelNumber: Long): Word {
         TODO()
     }
+
+    override val lastLevel: Long
+        get() = 4
 }
 
 class TestLevelRepository : LevelRepository {
@@ -43,5 +49,9 @@ class TestLevelRepository : LevelRepository {
 
     override fun levelPassed(level: Level) {
         currentLevel = level.number + 1
+    }
+
+    override fun reset() {
+        currentLevel = 1
     }
 }

@@ -2,9 +2,9 @@ package com.snakyapps.khiardle.ui
 
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -29,9 +29,23 @@ import com.snakyapps.khiardle.backend.models.Level
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-internal fun ColumnScope.GameHeader(level: Level) {
+internal fun ColumnScope.GameHeader(level: Level, modifier: Modifier = Modifier) {
+    var revealing by remember(level) { mutableStateOf(false) }
+    GameHeader(modifier) {
+        LevelHeaderContent(level, revealing) {
+            revealing = it
+        }
+    }
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+internal fun ColumnScope.GameHeader(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
     val context = LocalContext.current
-    Column(Modifier
+    Column(modifier
         .clickable {
 
             context.startActivity(Intent(Intent.ACTION_VIEW).apply {
@@ -40,7 +54,6 @@ internal fun ColumnScope.GameHeader(level: Level) {
         }
         .align(Alignment.CenterHorizontally)) {
 
-        var revealing by remember(level) { mutableStateOf(false) }
         Text(text = stringResource(id = R.string.app_name),
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Black,
@@ -52,36 +65,46 @@ internal fun ColumnScope.GameHeader(level: Level) {
             fontSize = 10.sp,
             modifier = Modifier.align(
                 Alignment.CenterHorizontally))
-        Row(
-            modifier = Modifier
-                .align(
-                    Alignment.CenterHorizontally)
-                .padding(top = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Level ${level.number}",
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Black,
-                fontFamily = FontFamily.Serif,
-            )
-            AnimatedContent(revealing, modifier = Modifier.padding(start = 16.dp)) {
-                if (!it) {
-                    Text(text = "(reveal)",
-                        style = MaterialTheme.typography.labelSmall,
-                        modifier = Modifier.clickable {
-                            revealing = true
-                        })
-                } else {
-                    Text(text = level.word.word, style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary,
+        content()
 
-                        modifier = Modifier.clickable {
-                            revealing = false
-                        })
-                }
+    }
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+private fun ColumnScope.LevelHeaderContent(
+    level: Level,
+    revealing: Boolean,
+    onRevealChanged: (Boolean) -> Unit,
+) {
+    Row(
+        modifier = Modifier.Companion
+            .align(
+                Alignment.CenterHorizontally)
+            .padding(top = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = "Level ${level.number}",
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Black,
+            fontFamily = FontFamily.Serif,
+        )
+        Box(modifier = Modifier.padding(start = 16.dp)) {
+            if (!revealing) {
+                Text(text = "(reveal)",
+                    style = MaterialTheme.typography.labelSmall,
+                    modifier = Modifier.clickable {
+                        onRevealChanged(true)
+                    })
+            } else {
+                Text(text = level.word.word, style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.primary,
+
+                    modifier = Modifier.clickable {
+                        onRevealChanged(false)
+                    })
             }
-
         }
 
     }

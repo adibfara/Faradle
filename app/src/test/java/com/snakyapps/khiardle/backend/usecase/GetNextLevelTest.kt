@@ -32,4 +32,16 @@ class GetNextLevelTest {
         testLevelRepository.levelPassed(level1)
         assertEquals(level2, useCase.execute())
     }
+
+    @Test
+    fun `getting the next level for last level returns null`() {
+        val useCase = createUseCase()
+        val level1 = Level(1, testWordRepository.getWordForLevel(1))
+        val level2 = Level(2, testWordRepository.getWordForLevel(2))
+        assertEquals(level1, useCase.execute())
+        testLevelRepository.levelPassed(level1)
+        assertEquals(level2, useCase.execute())
+        testLevelRepository.levelPassed(level2)
+        assertEquals(null, useCase.execute())
+    }
 }
